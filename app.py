@@ -19,16 +19,16 @@ db = SQLAlchemy(app)
 def index():
     return render_template('index.html')
 
-@app.route('/register', methods=['POST', 'GET'])
-def register():
+@app.route('/registerStudent', methods=['POST', 'GET'])
+def registerStudent():
 
-    reg_form = RegForm()
+    student_form = StudentReg()
 
-    if reg_form.validate_on_submit():
-        firstname = reg_form.firstname.data
-        lastname = reg_form.lastname.data
-        classcode = reg_form.classcode.data
-        password = reg_form.password.data
+    if student_form.validate_on_submit():
+        firstname = student_form.firstname.data
+        lastname = student_form.lastname.data
+        classcode = student_form.classcode.data
+        password = student_form.password.data
         username = lastname[:3] + firstname[:3]
 
         # Check username exists
@@ -42,7 +42,31 @@ def register():
         db.session.commit()
         return "Student added"
 
-    return render_template('register.html', form=reg_form)
+    return render_template('reg_student.html', form=student_form)
+
+@app.route('/registerTeacher', methods=['POST', 'GET'])
+def registerTeacher():
+
+    teacher_form = TeacherReg()
+
+    if teacher_form.validate_on_submit():
+        firstname = teacher_form.firstname.data
+        lastname = teacher_form.lastname.data
+        password = teacher_form.password.data
+        username = firstname[0] + lastname
+
+        # Check username exists
+        user_object = Student.query.filter_by(username=username).first()
+        if user_object:
+            return "Username taken"
+
+        # Add student to database
+        teacher = Teacher(firstname=firstname, lastname=lastname, username=username, password=password)
+        db.session.add(teacher)
+        db.session.commit()
+        return "Teacher added"
+
+    return render_template('reg_teacher.html', form=teacher_form)
 
 @app.route('/login')
 def login():

@@ -25,7 +25,8 @@ class Teacher(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String)
     lastname = db.Column(db.String)
-    username = deb.Column(db.String(6), nullable=False)
+    username = db.Column(db.String(6), nullable=False)
+    password = db.Column(db.String(25), nullable=False)
 
     def __repr__(self):
         return "<Teacher(firstName='{}', lastName='{}')>"\

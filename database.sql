@@ -12,7 +12,8 @@ CREATE TABLE teachers (
   id SERIAL PRIMARY KEY,
   firstname VARCHAR NOT NULL,
   lastname VARCHAR NOT NULL,
-  username VARCHAR UNIQUE NOT NULL
+  username VARCHAR UNIQUE NOT NULL,
+  password TEXT NOT NULL
 );
 
 CREATE TABLE transactions(
@@ -20,4 +21,4 @@ CREATE TABLE transactions(
   sender REFERENCES teachers(id),
   recipient REFERENCES students(id),
   amount INTEGER NOT NULL
-)
+);

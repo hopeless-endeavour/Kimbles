@@ -1,0 +1,18 @@
+{% from 'form_helper.html' import displayField %}
+{% extends "layout.html" %}
+{% block title %}Kimbles{% endblock %}
+{% block content %}
+  <h1>Register Teacher</<h1>
+  <form action="{{ url_for('registerTeacher')}}" method='POST'>
+    {{ displayField(form.firstname, 'First Name', autocomplete="off",
+          autofocus=true)}}
+    {{ displayField(form.lastname, 'Last Name', autocomplete="off",
+          autofocus=true)}}
+    {{ displayField(form.password, 'Password')}}
+    {{ displayField(form.confirm_pswd, 'Retype Password')}}
+    <div>
+      {{ form.submit_button}}
+    </div>
+    {{ form.csrf_token }}
+  </form>
+{% endblock content %}

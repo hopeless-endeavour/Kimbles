@@ -1,41 +1,45 @@
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Date
+from flask_sqlalchemy import SQLAlchemy
 
-Base = declarative_base()
+db = SQLAlchemy()
 
+class Student(db.Model):
+    """ Student Model """
 
-class Student(Base):
     __tablename__ = 'students'
-    id = Column(Integer, primary_key=True)
-    firstName = Column(String)
-    lastName = Column(String)
-    classCode = Column(String)
-    # user = lastName[:2]+firstName[:2]
-    tokens = Column(Integer)
+    id = db.Column(db.Integer, primary_key=True)
+    firstname = db.Column(db.String(25), nullable=False)
+    lastname = db.Column(db.String(25), nullable=False)
+    username = db.Column(db.String(6), nullable=False)
+    classcode = db.Column(db.String(25), nullable=False)
+    password = db.Column(db.String(25), nullable=False)
 
     def __repr__(self):
-        return "<Student(firstName='{}', lastName='{}', classCode='{}', tokens='{}')>"\
-                .format(self.firstName, self.lastName, self.classCode, self.tokens)
+        return "<Student(firstName='{}', lastName='{}', classCode='{}')>"\
+                .format(self.firstName, self.lastName, self.classCode)
 
 
-class Teacher(Base):
+class Teacher(db.Model):
+    """ Teacher Model """
+
     __tablename__ = 'teachers'
-    id = Column(Integer, primary_key=True)
-    firstName = Column(String)
-    lastName = Column(String)
-    # user = lastName[:2]+firstName[:2]
+    id = db.Column(db.Integer, primary_key=True)
+    firstname = db.Column(db.String)
+    lastname = db.Column(db.String)
+    username = deb.Column(db.String(6), nullable=False)
 
     def __repr__(self):
         return "<Teacher(firstName='{}', lastName='{}')>"\
                 .format(self.firstName, self.lastName)
 
 
-class Transaction(Base):
+class Transaction(db.Model):
+    """ Transaction Model """
+
     __tablename__ = 'transactions'
-    id = Column(Integer, primary_key=True)
-    sender = Column(String)  # ForeignKey() schema
-    recipient = Column(String)
-    amount = Column(Integer)
+    id = db.Column(db.Integer, primary_key=True)
+    sender = db.Column(db.String, db.ForeignKey("teachers.id"))  # ForeignKey() schema
+    recipient = db.Column(db.String, db.ForeignKey("students.id"))
+    amount = db.Column(db.Integer)
 
     def __repr__(self):
         return "<Transaction(sender='{} recipient='{}', amount='{}')>"\

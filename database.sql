@@ -1,15 +1,18 @@
 CREATE TABLE  students(
-  id UNIQUE PRIMARY KEY,  # student user (brocla) ??
-  firstName VARCHAR NOT NULL,
-  lastName VARCHAR NOT NULL,
-  class VARCHAR NOT NULL,
+  id SERIAL PRIMARY KEY,
+  firstname VARCHAR NOT NULL,
+  lastname VARCHAR NOT NULL,
+  username VARCHAR UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  classcode VARCHAR NOT NULL,
   tokens INTEGER DEFAULT 0
 );
 
 CREATE TABLE teachers (
   id SERIAL PRIMARY KEY,
-  firstName VARCHAR NOT NULL,
-  lastName VARCHAR NOT NULL
+  firstname VARCHAR NOT NULL,
+  lastname VARCHAR NOT NULL,
+  username VARCHAR UNIQUE NOT NULL
 );
 
 CREATE TABLE transactions(
@@ -18,6 +21,3 @@ CREATE TABLE transactions(
   recipient REFERENCES students(id),
   amount INTEGER NOT NULL
 )
-
-INSERT INTO students (firstName, lastName, year) VALUES ('Lucas', 'Brown', 12)
-INSERT INTO teachers (firstName, lastName) VALUES ('Barry', 'Harris')

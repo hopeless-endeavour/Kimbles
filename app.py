@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for, redirect
 
 from wtform_fields import *
 from models import *
@@ -18,6 +18,7 @@ db = SQLAlchemy(app)
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
+
 
 @app.route('/registerStudent', methods=['POST', 'GET'])
 def registerStudent():
@@ -40,9 +41,11 @@ def registerStudent():
         student = Student(firstname=firstname, lastname=lastname, username=username, classcode=classcode, password=password)
         db.session.add(student)
         db.session.commit()
-        return "Student added"
+
+        return redirect(url_for('login'))
 
     return render_template('reg_student.html', form=student_form)
+
 
 @app.route('/registerTeacher', methods=['POST', 'GET'])
 def registerTeacher():
@@ -56,7 +59,7 @@ def registerTeacher():
         username = firstname[0] + lastname
 
         # Check username exists
-        user_object = Student.query.filter_by(username=username).first()
+        user_object = Teacher.query.filter_by(username=username).first()
         if user_object:
             return "Username taken"
 
@@ -64,13 +67,22 @@ def registerTeacher():
         teacher = Teacher(firstname=firstname, lastname=lastname, username=username, password=password)
         db.session.add(teacher)
         db.session.commit()
-        return "Teacher added"
+
+        return redirect(url_for('login'))
 
     return render_template('reg_teacher.html', form=teacher_form)
 
-@app.route('/login')
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    pass
+
+    login_form = LoginForm()
+
+    # Allow if login is validated successfully
+    if login_form.validate_on_submit():
+        return "Logged in"
+
+    return render_template("login.html", form=login_form)
 
 if __name__ == '__main__':
     app.run(debug=True)

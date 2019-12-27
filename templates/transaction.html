@@ -1,0 +1,20 @@
+{% from 'form_helper.html' import displayField %}
+{% extends "layout.html" %}
+
+{% block title %}Send Token{% endblock %}
+
+{% block content %}
+  <h2>Send Token</h2>
+
+  <form action="{{ url_for('sendToken')}}" method="POST">
+    {{ displayField(form.sender, 'Sender', autocomplete="off",
+          autofocus=true)}}
+    {{ displayField(form.recipient, 'Recipient')}}
+    {{ displayField(form.amount, 'Amount')}}
+    <div>
+      {{ form.submit_button }}
+    </div>
+    {{ form.csrf_token }}
+  </form>
+
+{% endblock %}

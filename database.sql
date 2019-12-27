@@ -18,7 +18,7 @@ CREATE TABLE teachers (
 
 CREATE TABLE transactions(
   id SERIAL PRIMARY KEY,
-  sender REFERENCES teachers(id),
-  recipient REFERENCES students(id),
+  sender INTEGER NOT NULL REFERENCES teachers,
+  recipient INTEGER NOT NULL REFERENCES students,
   amount INTEGER NOT NULL
 );

@@ -84,5 +84,27 @@ def login():
 
     return render_template("login.html", form=login_form)
 
+
+@app.route('/sendToken', methods=['GET', 'POST'])
+def sendToken():
+
+    transaction_form = TransactionForm()
+
+    if transaction_form.validate_on_submit():
+        sender = transaction_form.sender.data
+        recipient = transaction_form.recipient.data
+        amount = transaction_form.amount.data
+
+        sender_id = Teacher.query.filter_by(username=sender).first()
+        recipient_id = Student.query.filter_by(username=recipient).first()
+
+        transaction = Transaction(sender=sender_id.id, recipient=recipient_id.id, amount=amount)
+        db.session.add(transaction)
+        db.session.commit()
+
+        return "Successful Transaction"
+
+    return render_template("transaction.html", form=transaction_form)
+
 if __name__ == '__main__':
     app.run(debug=True)

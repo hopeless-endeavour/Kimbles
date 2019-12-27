@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, IntegerField
 from wtforms.validators import InputRequired, Length, EqualTo, ValidationError
 
 from models import Teacher, Student
@@ -21,12 +21,26 @@ def invalid_creds(form, field):
     elif teacher_object:
         user = teacher_object
     else:
-        raise ValidationError("User does not exist")
+        raise ValidationError("Username or password is incorrect")
 
     # validate password
     if input_password != user.password:
-        raise ValidationError("Password is incorrect")
-        # change to generic 'Username or password incorrect' for imporved security
+        raise ValidationError("Username or password is incorrect")
+
+
+def validate_transaction(form, field):
+    """ Validates sender and recipient of transaction """
+
+    input_sender = form.sender.data
+    input_recipient = field.data
+
+    # search db for corresponding sender
+    sender_object = Teacher.query.filter_by(username=input_sender).first()
+    recipient_object = Student.query.filter_by(username=input_recipient).first()
+
+    if sender_object is None or recipient_object is None:
+        raise ValidationError("Sender or recipient does not exist")
+
 
 class StudentReg(FlaskForm):
     """ Student Registraion Form """
@@ -65,7 +79,7 @@ class TeacherReg(FlaskForm):
         characters")])
     password = PasswordField('password_label',
         validators=[InputRequired(message="Password required"),
-        Length(min=4, max=25, message="Password must be between 5 and 25\
+        Length(min=5, max=25, message="Password must be between 5 and 25\
         characters")])
     confirm_pswd = PasswordField('confirm_pswd_label',
         validators=[InputRequired(message="Password required"),
@@ -81,3 +95,15 @@ class LoginForm(FlaskForm):
     password = PasswordField('password_label',
         validators=[InputRequired(message="Password required"), invalid_creds])
     submit_button = SubmitField('Login')
+
+
+class TransactionForm(FlaskForm):
+    """ Token Transaction Form """
+
+    sender = StringField('sender_label',
+        validators=[InputRequired(message="Sender username required")])
+    recipient = StringField('recipient_label',
+        validators=[InputRequired(message="Recipient username required"), validate_transaction])
+    amount = IntegerField('recipient_label',
+        validators=[InputRequired(message="Amount required")])
+    submit_button = SubmitField('Send')

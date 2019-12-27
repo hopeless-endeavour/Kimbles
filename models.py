@@ -38,7 +38,7 @@ class Transaction(db.Model):
 
     __tablename__ = 'transactions'
     id = db.Column(db.Integer, primary_key=True)
-    sender = db.Column(db.String, db.ForeignKey("teachers.id"))  # ForeignKey() schema
+    sender = db.Column(db.String, db.ForeignKey("teachers.id"))
     recipient = db.Column(db.String, db.ForeignKey("students.id"))
     amount = db.Column(db.Integer)
 

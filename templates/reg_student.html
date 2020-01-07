@@ -1,12 +1,12 @@
 {% from 'form_helper.html' import displayField %}
-{% extends "layout.html" %}
+{% extends "pre-login.html" %}
 
-{% block title %}Kimbles{% endblock %}
+{% block title %}Send Token{% endblock %}
 
 {% block content %}
-  <h2>Register Student</<h2>
+  <h2>Register Student</h2>
 
-  <form action="{{ url_for('registerStudent')}}" method='POST'>
+  <form action="{{ url_for('registerStudent')}}" method="POST">
     {{ displayField(form.firstname, 'First Name', autocomplete="off",
           autofocus=true)}}
     {{ displayField(form.lastname, 'Last Name', autocomplete="off",
@@ -20,4 +20,4 @@
     {{ form.csrf_token }}
   </form>
 
-{% endblock content %}
+{% endblock %}

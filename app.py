@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, render_template, request, url_for, redirect
+from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 
 from wtform_fields import *
 from models import *
@@ -13,6 +14,16 @@ app.secret_key = 'secret key'
 app.config["SQLALCHEMY_DATABASE_URI"] = 'postgres://ysfcykvennnxov:e911f42296ffa7b2d0477cc1fd60bb248ad149ee6e1513a9fe52e9f84ce57a7c@ec2-54-228-243-238.eu-west-1.compute.amazonaws.com:5432/depivghlt560jh'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
+
+# Flask login configuration
+login = LoginManager(app)
+login.init_app(app)
+
+
+@login.user_loader
+def load_user(id):
+
+    return Teacher.query.get(int(id)) or Student.query.get(int(id))
 
 
 @app.route('/', methods=['GET'])
@@ -80,12 +91,22 @@ def login():
 
     # Allow if login is validated successfully
     if login_form.validate_on_submit():
-        return "Logged in"
+        teacher_object = Teacher.query.filter_by(username=login_form.username.data).first()
+        student_object = Student.query.filter_by(username=login_form.username.data).first()
+        if teacher_object is not None:
+            login_user(teacher_object)
+            return redirect(url_for('sendToken'))
+        else:
+            login_user(student_object)
+            return redirect(url_for('viewWallet'))
+
+
 
     return render_template("login.html", form=login_form)
 
 
 @app.route('/sendToken', methods=['GET', 'POST'])
+@login_required
 def sendToken():
 
     transaction_form = TransactionForm()
@@ -99,12 +120,30 @@ def sendToken():
         recipient_id = Student.query.filter_by(username=recipient).first()
 
         transaction = Transaction(sender=sender_id.id, recipient=recipient_id.id, amount=amount)
+        db.session.query(Student).filter(Student.id == recipient_id.id).update({'tokens': (Student.tokens + amount)})
         db.session.add(transaction)
         db.session.commit()
 
         return "Successful Transaction"
 
     return render_template("transaction.html", form=transaction_form)
+
+
+@app.route('/viewWallet', methods=['GET'])
+@login_required
+def viewWallet():
+
+    transactions = Transaction.query.filter_by(recipient=current_user.id).all()
+    return render_template('view_wallet.html', transactions=transactions)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+
+    logout_user()
+
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)

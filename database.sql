@@ -21,4 +21,5 @@ CREATE TABLE transactions(
   sender INTEGER NOT NULL REFERENCES teachers,
   recipient INTEGER NOT NULL REFERENCES students,
   amount INTEGER NOT NULL
+  timestamp TIMESTAMPTZ DEFAULT Now()
 );

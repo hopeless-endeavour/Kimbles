@@ -1,14 +1,12 @@
 {% from 'form_helper.html' import displayField %}
 {% extends "post-login.html" %}
 
-{% block title %}Send Token{% endblock %}
+{% block title %}Send Coin{% endblock %}
 
 {% block content %}
-  <h2>Send Token</h2>
+  <h2>Send Coin</h2>
 
-  <form action="{{ url_for('sendToken')}}" method="POST">
-    {{ displayField(form.sender, 'Sender', autocomplete="off",
-          autofocus=true)}}
+  <form action="{{ url_for('sendCoin')}}" method="POST">
     {{ displayField(form.recipient, 'Recipient')}}
     {{ displayField(form.amount, 'Amount')}}
     <div>

@@ -2,28 +2,74 @@ import os
 
 from flask import Flask, render_template, request, url_for, redirect
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
+from flask_user import roles_required, UserManager
+from flask_sqlalchemy import SQLAlchemy
 
 from wtform_fields import *
-from models import *
+from models import db, User, Coin, Transaction, Role
 
-# App configuration
+# Create app
 app = Flask(__name__)
-app.secret_key = 'secret key'
 
-# Database configuration
-app.config["SQLALCHEMY_DATABASE_URI"] = 'postgres://ysfcykvennnxov:e911f42296ffa7b2d0477cc1fd60bb248ad149ee6e1513a9fe52e9f84ce57a7c@ec2-54-228-243-238.eu-west-1.compute.amazonaws.com:5432/depivghlt560jh'
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db = SQLAlchemy(app)
+# Config app according to stage
+if app.config["ENV"] == "production":
+    app.config.from_object('config.ProductionConfig')
+else:
+    app.config.from_object('config.DevelopmentConfig')
+
+# Initiliase database
+db.init_app(app)
+
+@app.cli.command('createdb')
+def create():
+    """ CLI command to create db tables (flask createdb) """
+
+    db.create_all()
+
+@app.cli.command("create_sampledb")
+def create_sampledb_cmd():
+    """ CLI command to insert sample data into db (flask create_sampledb) """
+
+    firstnames = ['Clarissa', 'Lucas', 'Jack', 'Lewis']
+    lastnames = ['Brown', 'Jones', 'Smith', 'Thomas']
+    usernames = ['BroCla', 'JonLuc', 'SmiJac', 'ThoLew']
+    pwd = 'test'
+    roles = ['Student', 'Teacher', 'Admin', 'Vendor']
+
+    for i in range(0, len(roles)):
+        role_name = Role(name=roles[i])
+        db.session.add(role_name)
+        db.session.commit()
+
+    r = db.session.query(Role).all()
+    for i in range(0, len(firstnames)):
+        user = User(firstname=firstnames[i], lastname=lastnames[i], username=usernames[i], password=pwd)
+        user.roles = [r[i]]
+        db.session.add(user)
+        db.session.commit()
+
+    for i in range(10):
+        coin = Coin()
+        db.session.add(coin)
+        db.session.commit()
+
+@app.cli.command("cleardb")
+def cleardb_cmd():
+    """ CLI command to clear all data from all tables in db (flask cleardb) """
+
+    for table in db.metadata.sorted_tables:
+        db.session.execute(table.delete())
+    db.session.commit()
 
 # Flask login configuration
 login = LoginManager(app)
 login.init_app(app)
-
+user_manager = UserManager(app, db, User)
 
 @login.user_loader
 def load_user(id):
 
-    return Teacher.query.get(int(id)) or Student.query.get(int(id))
+    return User.query.get(int(id))
 
 
 @app.route('/', methods=['GET'])
@@ -31,57 +77,36 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/registerStudent', methods=['POST', 'GET'])
-def registerStudent():
+@app.route('/register', methods=['POST', 'GET'])
+def register():
 
-    student_form = StudentReg()
+    user_form = UserReg()
 
-    if student_form.validate_on_submit():
-        firstname = student_form.firstname.data
-        lastname = student_form.lastname.data
-        classcode = student_form.classcode.data
-        password = student_form.password.data
-        username = lastname[:3] + firstname[:3]
+    if user_form.validate_on_submit():
+        firstname = user_form.firstname.data
+        lastname = user_form.lastname.data
+        role = user_form.role.data
+        password =user_form.password.data
+        username = lastname[:3] + firstname[:3] # creates username with format eg. John Smith -> SmiJon
 
-        # Check username exists
-        user_object = Student.query.filter_by(username=username).first()
-        if user_object:
+        # Check if username already exists
+        user_obj = User.query.filter_by(username=username).first()
+        if user_obj:
             return "Username taken"
 
-        # Add student to database
-        student = Student(firstname=firstname, lastname=lastname, username=username, classcode=classcode, password=password)
-        db.session.add(student)
+        # Check if role exists - change later
+        roles = [r.name for r in Role.query.all()]
+        if role not in roles:
+            return "No such role"
+
+        # Add user to database
+        user = User(firstname=firstname, lastname=lastname, username=username, password=password)
+        db.session.add(user)
         db.session.commit()
 
         return redirect(url_for('login'))
 
-    return render_template('reg_student.html', form=student_form)
-
-
-@app.route('/registerTeacher', methods=['POST', 'GET'])
-def registerTeacher():
-
-    teacher_form = TeacherReg()
-
-    if teacher_form.validate_on_submit():
-        firstname = teacher_form.firstname.data
-        lastname = teacher_form.lastname.data
-        password = teacher_form.password.data
-        username = firstname[0] + lastname
-
-        # Check username exists
-        user_object = Teacher.query.filter_by(username=username).first()
-        if user_object:
-            return "Username taken"
-
-        # Add student to database
-        teacher = Teacher(firstname=firstname, lastname=lastname, username=username, password=password)
-        db.session.add(teacher)
-        db.session.commit()
-
-        return redirect(url_for('login'))
-
-    return render_template('reg_teacher.html', form=teacher_form)
+    return render_template('register.html', form=user_form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -91,36 +116,32 @@ def login():
 
     # Allow if login is validated successfully
     if login_form.validate_on_submit():
-        teacher_object = Teacher.query.filter_by(username=login_form.username.data).first()
-        student_object = Student.query.filter_by(username=login_form.username.data).first()
-        if teacher_object is not None:
-            login_user(teacher_object)
-            return redirect(url_for('sendToken'))
-        else:
-            login_user(student_object)
-            return redirect(url_for('viewWallet'))
-
-
+        user_obj = User.query.filter_by(username=login_form.username.data).first()
+        if user_obj is not None:
+            login_user(user_obj)
+            if user_obj.roles == 'Teacher':
+                return redirect(url_for('sendCoin'))
+            elif user_obj.roles == 'Student':
+                return redirect(url_for('viewWallet'))
 
     return render_template("login.html", form=login_form)
 
 
-@app.route('/sendToken', methods=['GET', 'POST'])
+@app.route('/sendCoin', methods=['GET', 'POST'])
 @login_required
-def sendToken():
+def sendCoin():
 
     transaction_form = TransactionForm()
 
     if transaction_form.validate_on_submit():
-        sender = transaction_form.sender.data
+        sender_id = current_user.id
         recipient = transaction_form.recipient.data
         amount = transaction_form.amount.data
 
-        sender_id = Teacher.query.filter_by(username=sender).first()
-        recipient_id = Student.query.filter_by(username=recipient).first()
+        recipient_id = User.query.filter_by(username=recipient).first()
 
         transaction = Transaction(sender=sender_id.id, recipient=recipient_id.id, amount=amount)
-        db.session.query(Student).filter(Student.id == recipient_id.id).update({'tokens': (Student.tokens + amount)})
+        db.session.query(User).filter(User.id == recipient_id.id).update({'coins': (User.coins + amount)})
         db.session.add(transaction)
         db.session.commit()
 
@@ -134,6 +155,7 @@ def sendToken():
 def viewWallet():
 
     transactions = Transaction.query.filter_by(recipient=current_user.id).all()
+
     return render_template('view_wallet.html', transactions=transactions)
 
 

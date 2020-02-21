@@ -1,6 +1,6 @@
 {% macro displayField(fieldName, placeholderValue) %}
 
-<div>
+<div class="form-group">
   {{ fieldName(class_='form-control', placeholder=placeholderValue, **kwargs)  }}
 
   <!-- Error messages -->

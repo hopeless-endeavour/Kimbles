@@ -1,0 +1,33 @@
+{% extends "post-login.html" %}
+
+{% block title %}Coin Jar{% endblock %}
+
+{% block content %}
+  <div class="coinjar_caption text-center">
+    <h2>Your Coin Jar</h2>
+    <h4>You have {{ numofCoins }} Coins</h4>
+  </div>
+  <div class="transaction_table col-8">
+    <table class="table table-sm table-responsive">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Coin</th>
+          <th scope="col">Sender</th>
+          <th scope="col">Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {% for i in transactions %}
+              <th scope="row">{{ i }}</th>
+              <td>{{ i.coin_id }}</td>
+              <td>{{ i.sender_id.username }}</td>
+              <td>{{ i.timestamp }}</td>
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

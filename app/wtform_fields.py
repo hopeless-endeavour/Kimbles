@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, IntegerField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, SelectField, RadioField
 from wtforms.validators import InputRequired, Length, EqualTo, ValidationError
 
 from models import *
@@ -32,8 +32,7 @@ def validate_transaction(form, field):
     input_recipient = field.data
 
     # search db for corresponding sender
-    sender_object = Teacher.query.filter_by(username=input_sender).first()
-    recipient_object = Student.query.filter_by(username=input_recipient).first()
+    recipient_object = User.query.filter_by(username=input_recipient).first()
 
     if sender_object is None or recipient_object is None:
         raise ValidationError("Sender or recipient does not exist")
@@ -58,7 +57,7 @@ class UserReg(FlaskForm):
     confirm_pswd = PasswordField('confirm_pswd_label',
         validators=[InputRequired(message="Password required"),
         EqualTo('password', message="Password must match")])
-    submit_button = SubmitField('Create')
+    submit_button = SubmitField('Submit')
 
 
 class LoginForm(FlaskForm):
@@ -68,14 +67,14 @@ class LoginForm(FlaskForm):
         validators=[InputRequired(message="Usernmae required")])
     password = PasswordField('password_label',
         validators=[InputRequired(message="Password required"), invalid_creds])
-    submit_button = SubmitField('Login')
+    submit_button = SubmitField('Submit')
 
 
 class TransactionForm(FlaskForm):
-    """ Token Transaction Form """
+    """ Coin Transaction Form """
 
     recipient = StringField('recipient_label',
-        validators=[InputRequired(message="Recipient username required"), validate_transaction])
-    amount = IntegerField('recipient_label',
-        validators=[InputRequired(message="Amount required")])
-    submit_button = SubmitField('Send')
+        validators=[InputRequired(message="Student username required"), validate_transaction])
+    attitudeNum = RadioField('attitudeNum_label', choices=[1,2,4], validators=[InputRequired()])
+
+    submit_button = SubmitField('Submit')

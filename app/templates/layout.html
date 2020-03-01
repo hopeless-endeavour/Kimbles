@@ -20,17 +20,30 @@
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
           <li class "nav-item active">
-            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
           </li>
           <li class "nav-item">
-            <a class="nav-link" href="/leaderboard">Leaderboard</a>
+            <a class="nav-link" href="{{ url_for('main.leaderboard') }}">Leaderboard</a>
           </li>
+          {% if not current_user.is_authenticated %}
           <li class "nav-item">
-            <a class="nav-link" href="/register">Register</a>
+            <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
           </li>
           <li>
-            <a class="nav-link" href="/login">Login</a>
+            <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
           </li>
+          {% endif %}
+          {% if current_user.is_authenticated %}
+          <li class "nav-item">
+            <a class="nav-link" href="{{ url_for('main.coinJar') }}">Your Coin Jar</a>
+          </li>
+          <li>
+            <a class="nav-link" href="{{ url_for('main.sendCoin') }}">Send Coin</a>
+          </li>
+          <li>
+            <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+          </li>
+          {% endif %}
         </ul>
       </div>
   </nav>

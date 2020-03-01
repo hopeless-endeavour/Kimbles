@@ -1,0 +1,6 @@
+Firstname,Lastname,Username,Role,Password
+Clarissa,Brown,brocla,Student,test
+Lucas,Brown,broluc,Student,test
+Faiza,Mahmud,mahfai,Teacher,test
+Omar,Mahmud,mahoma,Teacher,test
+

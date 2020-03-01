@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField, SelectField, RadioField
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import InputRequired, Length, EqualTo, ValidationError
 
-from models import *
+from .models import User
 
 
 def invalid_creds(form, field):
@@ -37,8 +38,11 @@ def validate_transaction(form, field):
     if sender_object is None or recipient_object is None:
         raise ValidationError("Sender or recipient does not exist")
 
+def username_query():
+    return User.query
 
-class UserReg(FlaskForm):
+
+class RegForm(FlaskForm):
     """ Registraion Form """
 
     firstname = StringField('firstName_label',
@@ -49,11 +53,15 @@ class UserReg(FlaskForm):
         validators=[InputRequired(message="Last Name required"),
         Length(min=4, max=25, message="Last name must be between 4 and 25\
         characters")])
+    username = StringField('username_label',
+        validators=[InputRequired(message="Username required"),
+        Length(min=4, max=25, message="Username must be between 4 and 25\
+        characters")])
     password = PasswordField('password_label',
         validators=[InputRequired(message="Password required"),
         Length(min=4, max=25, message="Password must be between 4 and 25\
         characters")])
-    role = StringField('role_label', validators=[InputRequired()])
+    role = RadioField('role_label', choices=[('Teacher', 'Teacher'), ('Student', 'Student')], validators=[InputRequired()])
     confirm_pswd = PasswordField('confirm_pswd_label',
         validators=[InputRequired(message="Password required"),
         EqualTo('password', message="Password must match")])
@@ -64,7 +72,7 @@ class LoginForm(FlaskForm):
     """ Login Form """
 
     username = StringField('username_label',
-        validators=[InputRequired(message="Usernmae required")])
+        validators=[InputRequired(message="Username required")])
     password = PasswordField('password_label',
         validators=[InputRequired(message="Password required"), invalid_creds])
     submit_button = SubmitField('Submit')
@@ -73,8 +81,8 @@ class LoginForm(FlaskForm):
 class TransactionForm(FlaskForm):
     """ Coin Transaction Form """
 
-    recipient = StringField('recipient_label',
-        validators=[InputRequired(message="Student username required"), validate_transaction])
-    attitudeNum = RadioField('attitudeNum_label', choices=[1,2,4], validators=[InputRequired()])
+    recipient = QuerySelectField('recipient_label', get_label='username', allow_blank=True,
+        validators=[InputRequired(message="Student username required")])
+    attitudeNum = RadioField('attitudeNum_label', choices=[('1', 'One'),('2','Two'), ('4','Four')], validators=[InputRequired()])
 
     submit_button = SubmitField('Submit')

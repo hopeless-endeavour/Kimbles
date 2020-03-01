@@ -32,14 +32,16 @@ body {
   max-width: 100%;
   position: absolute;
   text-transform: uppercase;
-  top: 20%;
+  top: 15%;
 }
 
 .form {
-  position: absolute;
+  text-align: center;
+  position: relative;
   left: 0;
   right: 0;
   margin: auto;
+  margin-top: 5%;
 }
 
 .transaction_table {
@@ -51,5 +53,10 @@ body {
 
 .coinjar_caption {
   text-transform: uppercase;
-  
+
+}
+
+.radio {
+  margin-left: 10%;
+  margin-right: 10%;
 }

@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block title %}Leaderboard{% endblock %}
+
+{% block content %}
+  <div class="caption text-center">
+    <h1>Leaderboard</h1>
+  </div>
+  <div class="leaderboard">
+    {% for i in students %}
+      <ul>{ i.username }</ul>
+    {% endfor %}
+  </div>
+{% endblock %}

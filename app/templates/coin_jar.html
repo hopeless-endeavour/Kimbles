@@ -3,31 +3,32 @@
 {% block title %}Coin Jar{% endblock %}
 
 {% block content %}
-  <div class="coinjar_caption text-center">
+  <div class="coinjar_caption">
     <h2>Your Coin Jar</h2>
-    <h4>You have {{ numofCoins }} Coins</h4>
+    <h4>You have <b>{{ numofCoins }}</b> Coins</h4>
   </div>
-  <div class="transaction_table col-8">
-    <table class="table table-sm table-responsive">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Coin</th>
-          <th scope="col">Sender</th>
-          <th scope="col">Timestamp</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          {% for i in transactions %}
-              <th scope="row">{{ i }}</th>
-              <td>{{ i.coin_id }}</td>
-              <td>{{ i.sender_id.username }}</td>
-              <td>{{ i.timestamp }}</td>
-          {% endfor %}
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <table class="table table-sm table-bordered table-responsiv-md">
+    <thead>
+      <tr>
+        <th colspan="4" class='text-center'>Transaction Details</th>
+      </tr>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Sender</th>
+        <th scope="col">Timestamp</th>
+        <th scope="col">Awarded/Deducted</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for i in range(0, length) %}
+          <tr>
+            <th scope="row">{{ i }}</th>
+            <td>{{ senders[i].username }}</td>
+            <td>{{ transactions[i].timestamp }}</td>
+            <td>{{ status[i] }}</td>
+          </tr>
+        {% endfor %}
+    </tbody>
+  </table>
 
 {% endblock %}

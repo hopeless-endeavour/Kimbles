@@ -17,7 +17,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(25), nullable=False)
     password = db.Column(db.String(25), nullable=False)
     roles = db.relationship('Role', secondary='user_roles', backref=db.backref('users', lazy='dynamic'))
-    coins = db.relationship('Coin', backref='owner')
+    coins = db.relationship('Coin', backref='owner', lazy=True)
 
     @hybrid_method
     def has_role(self, role):

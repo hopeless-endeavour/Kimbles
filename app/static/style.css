@@ -6,6 +6,12 @@ body {
   color: #505962;
 }
 
+h6 {
+  text-align: left;
+  margin-top: 2rem;
+  font-weight: 700;
+}
+
 .navbar {
   text-transform: uppercase;
   font-weight: 700;
@@ -32,6 +38,7 @@ body {
   max-width: 100%;
   position: absolute;
   text-transform: uppercase;
+  text-align: center;
   top: 15%;
 }
 
@@ -44,15 +51,17 @@ body {
   margin-top: 5%;
 }
 
-.transaction_table {
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin: auto;
+.table {
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5%;
 }
 
 .coinjar_caption {
   text-transform: uppercase;
+  text-align: center;
+  margin-top: 2rem;
 
 }
 

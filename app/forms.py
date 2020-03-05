@@ -26,22 +26,6 @@ def invalid_creds(form, field):
         raise ValidationError("Username or password is incorrect")
 
 
-def validate_transaction(form, field):
-    """ Validates sender and recipient of transaction """
-
-    input_sender = form.sender.data
-    input_recipient = field.data
-
-    # search db for corresponding sender
-    recipient_object = User.query.filter_by(username=input_recipient).first()
-
-    if sender_object is None or recipient_object is None:
-        raise ValidationError("Sender or recipient does not exist")
-
-def username_query():
-    return User.query
-
-
 class RegForm(FlaskForm):
     """ Registraion Form """
 
@@ -59,7 +43,7 @@ class RegForm(FlaskForm):
         characters")])
     password = PasswordField('password_label',
         validators=[InputRequired(message="Password required"),
-        Length(min=4, max=25, message="Password must be between 4 and 25\
+        Length(min=8, max=25, message="Password must be between 8 and 25\
         characters")])
     role = RadioField('role_label', choices=[('Teacher', 'Teacher'), ('Student', 'Student')], validators=[InputRequired()])
     confirm_pswd = PasswordField('confirm_pswd_label',
@@ -83,6 +67,6 @@ class TransactionForm(FlaskForm):
 
     recipient = QuerySelectField('recipient_label', get_label='username', allow_blank=True,
         validators=[InputRequired(message="Student username required")])
-    attitudeNum = RadioField('attitudeNum_label', choices=[('1', 'One'),('2','Two'), ('4','Four')], validators=[InputRequired()])
+    attitudeNum = RadioField('attitudeNum_label', choices=[('1', 'One'),('2','Two'), ('3','Three'), ('4','Four')], validators=[InputRequired()])
 
     submit_button = SubmitField('Submit')

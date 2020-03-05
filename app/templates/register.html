@@ -4,8 +4,10 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-  <div class="form col-4">
+  <div class="caption">
     <h2>Register</h2>
+  </div>
+  <div class="form col-4">
     <form action="{{ url_for('auth.register')}}" method="POST">
       {{ displayField(form.firstname, 'First Name', autocomplete="off",
             autofocus=true)}}

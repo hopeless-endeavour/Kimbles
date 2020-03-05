@@ -1,6 +1,8 @@
 Firstname,Lastname,Username,Role,Password
-Clarissa,Brown,brocla,Student,test
-Lucas,Brown,broluc,Student,test
-Faiza,Mahmud,mahfai,Teacher,test
-Omar,Mahmud,mahoma,Teacher,test
-
+Clarissa,Brown,Clarissa,Student,12345678
+Lucas,Brown,Lucas,Student,12345678
+Faiza,Mahmud,Faiza,Student,12345678
+Omar,Mahmud,Omar,Student,12345678
+Mitesh,Rathod,Mitesh,Student,12345678
+Barry,Harris,Harris,Teacher,12345678
+Paul,Gooch,Gooch,Teacher,12345678

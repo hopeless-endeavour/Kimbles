@@ -44,18 +44,17 @@ h6 {
 
 .form {
   text-align: center;
-  position: relative;
   left: 0;
   right: 0;
   margin: auto;
-  margin-top: 5%;
+  margin-top: 8%;
 }
 
 .table {
   width: 60%;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 5%;
+  margin-top: 10%;
 }
 
 .coinjar_caption {
@@ -66,6 +65,10 @@ h6 {
 }
 
 .radio {
-  margin-left: 10%;
-  margin-right: 10%;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+.error {
+  margin-top: 3%;
 }

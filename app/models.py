@@ -3,11 +3,11 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.hybrid import hybrid_method
 # from flask_user import UserMixin
-from flask_login import UserMixin
+from flask_user import UserMixin
 
 db = SQLAlchemy()
 
-class User(UserMixin, db.Model):
+class User(db.Model, UserMixin):
     """ Student Model """
 
     __tablename__ = 'users'
@@ -19,13 +19,6 @@ class User(UserMixin, db.Model):
     roles = db.relationship('Role', secondary='user_roles', backref=db.backref('users', lazy='dynamic'))
     coins = db.relationship('Coin', backref='owner', lazy=True)
 
-    @hybrid_method
-    def has_role(self, role):
-        query = db.session.query(Role).filter(Role.name==role).first()
-        if query:
-            if query.name in self.roles:
-                return True
-        return False
 
 class Role(db.Model):
     """ Role Model """
@@ -49,6 +42,7 @@ class Transaction(db.Model):
     sender_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     recipient_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     coin_id = db.Column(db.Integer, db.ForeignKey("coins.id"))
+    type = db.Column(db.String)
     timestamp =db.Column(db.DateTime, default=datetime.now())
 
 class Coin(db.Model):

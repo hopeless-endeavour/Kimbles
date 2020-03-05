@@ -9,9 +9,11 @@ auth = Blueprint('auth', __name__)
 @auth.route('/register', methods=['POST', 'GET'])
 def register():
 
+    # load registration form
     user_form = RegForm()
 
-    if user_form.validate_on_submit():
+    # validate and get data from reg form
+    if user_form.validate_on_submit(): # built in flask validation
         firstname = user_form.firstname.data
         lastname = user_form.lastname.data
         username = user_form.username.data
@@ -41,9 +43,10 @@ def register():
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
 
+    # load login form
     login_form = LoginForm()
 
-    # Allow if login is validated successfully
+    # login user if validated successfully
     if login_form.validate_on_submit():
         user_obj = User.query.filter_by(username=login_form.username.data).first()
         if user_obj:

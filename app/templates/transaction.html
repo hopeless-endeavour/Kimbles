@@ -4,11 +4,14 @@
 {% block title %}Award Student{% endblock %}
 
 {% block content %}
-  <div class="form col-4">
+  <div class="caption">
     <h2>Award Student</h2>
+  </div>
+  <div class="form col-4">
     <form action="{{ url_for('main.sendCoin')}}" method="POST">
       <div class="form-group control_group">
-        <h6>Select Student:</h6> {{form.recipient}}
+        <h6>Select Student:</h6>
+        {{form.recipient}}
       </div>
       <div class="control_group">
           <h6>Choose Attitude To Learning Number: </h6>

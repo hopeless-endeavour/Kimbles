@@ -4,7 +4,7 @@
   {{ fieldName(class_='form-control', placeholder=placeholderValue, **kwargs)  }}
 
   <!-- Error messages -->
-  <ul>
+  <ul class='error'>
     {% for error in fieldName.errors %}
       <li>{{ error }}</li>
     {% endfor %}
